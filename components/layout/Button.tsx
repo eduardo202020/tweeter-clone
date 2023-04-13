@@ -15,12 +15,14 @@ const Button: React.FC<ButtonProps> = ({
   secondary,
   fullWidth,
   large,
-  onClick,
+  onClick: onSubmit,
   disabled,
   outline,
 }) => {
   return (
     <button
+      disabled={disabled}
+      onClick={onSubmit}
       className={`
       disabled:opacity-70 
       disabled:cursor-not-allowed 

@@ -1,4 +1,8 @@
-import { FC } from "react";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import useLoginModal from "@/hooks/useLoginModal";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { FC, useCallback } from "react";
 import { IconType } from "react-icons";
 
 interface SidebarProps {
@@ -6,6 +10,7 @@ interface SidebarProps {
   href: string;
   label: string;
   onClick?: () => void;
+  auth?: boolean;
 }
 
 const SidebarItem: FC<SidebarProps> = ({
@@ -13,9 +18,29 @@ const SidebarItem: FC<SidebarProps> = ({
   href,
   label,
   onClick,
+  auth,
 }) => {
+  const router = useRouter();
+  const loginModal = useLoginModal();
+  const { data: currentUser } = useCurrentUser();
+
+  const handleClick = useCallback(() => {
+    if (onClick) {
+      return onClick();
+    }
+    console.log("auth && !currentUser", auth && !currentUser);
+    console.log("auth", auth);
+    console.log("!currentUser", currentUser);
+
+    if (auth && !currentUser) {
+      loginModal.onOpen();
+    } else {
+      router.push(href);
+    }
+  }, [href, onClick, router, auth, loginModal, currentUser]);
+
   return (
-    <div className="flex flex-row items-center">
+    <div className="flex flex-row items-center" onClick={handleClick}>
       <div className="relative rounded-full h-14 w-14 flex items-center justify-center p-4 hover:bg-opacity-10 hover:bg-slate-300 cursor-pointer lg:hidden">
         <Icon size={28} color="white" />
       </div>
