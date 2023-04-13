@@ -22,22 +22,19 @@ const SidebarItem: FC<SidebarProps> = ({
 }) => {
   const router = useRouter();
   const loginModal = useLoginModal();
-  const { data: currentUser } = useCurrentUser();
+  const { data } = useSession();
 
   const handleClick = useCallback(() => {
     if (onClick) {
       return onClick();
     }
-    console.log("auth && !currentUser", auth && !currentUser);
-    console.log("auth", auth);
-    console.log("!currentUser", currentUser);
 
-    if (auth && !currentUser) {
+    if (auth && !data?.user?.email) {
       loginModal.onOpen();
     } else {
       router.push(href);
     }
-  }, [href, onClick, router, auth, loginModal, currentUser]);
+  }, [href, onClick, router, auth, loginModal, data?.user?.email]);
 
   return (
     <div className="flex flex-row items-center" onClick={handleClick}>
