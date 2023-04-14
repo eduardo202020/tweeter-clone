@@ -1,9 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/libs/prismadb";
+import { User } from "@prisma/client";
+
+export interface UserAndCount extends User {
+  followersCount: number;
+}
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<UserAndCount>
 ) {
   if (req.method !== "GET") {
     return res.status(405).end();
@@ -25,6 +30,9 @@ export default async function handler(
         id: userId,
       },
     });
+    if (!existingUser) {
+      throw new Error("Invalid Id");
+    }
 
     const followersCount = await prisma.user.count({
       where: {
