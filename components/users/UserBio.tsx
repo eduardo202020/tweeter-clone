@@ -1,17 +1,17 @@
-import useCurrentUser from "@/hooks/useCurrentUser";
 import useUser from "@/hooks/useUser";
 import React, { useMemo } from "react";
 
 import { format } from "date-fns";
 import Button from "../layout/Button";
 import { BiCalendar } from "react-icons/bi";
+import { useSession } from "next-auth/react";
 
 interface UserBioProps {
   userId: string;
 }
 
 const UserBio: React.FC<UserBioProps> = ({ userId }) => {
-  const { data: currentUser } = useCurrentUser();
+  const { data: currentUser } = useSession();
   const { data: fetchedUser } = useUser(userId);
 
   const createdAt = useMemo(() => {
@@ -25,7 +25,7 @@ const UserBio: React.FC<UserBioProps> = ({ userId }) => {
   return (
     <div className="border-b-[1px] border-neutral-800 pb-4">
       <div className="flex justify-end p-2">
-        {currentUser?.id === userId ? (
+        {currentUser?.user.id === userId ? (
           <Button secondary label="Edit" onClick={() => {}} />
         ) : (
           <Button onClick={() => {}} label="Follow" secondary />

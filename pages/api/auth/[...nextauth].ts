@@ -52,6 +52,14 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
+  callbacks: {
+    async session({ session, token, user }) {
+      // Send properties to the client, like an access_token and user id from a provider.
+      session.user.id = token.sub || "";
+
+      return session;
+    },
+  },
   pages: {
     signIn: "/auth",
   },
