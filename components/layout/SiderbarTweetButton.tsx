@@ -1,13 +1,20 @@
 import useLoginModal from "@/hooks/useLoginModal";
 import React, { useCallback } from "react";
 import { FaFeather } from "react-icons/fa";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const SiderbarTweetButton = () => {
   const loginModal = useLoginModal();
+  const router = useRouter();
+  const { data: user } = useSession();
 
   const onOpen = useCallback(() => {
-    loginModal.onOpen();
-  }, [loginModal]);
+    if (!user?.user?.email) {
+      return loginModal.onOpen();
+    }
+    router.push("/");
+  }, [user?.user?.email, loginModal, router]);
 
   return (
     <div onClick={onOpen}>
