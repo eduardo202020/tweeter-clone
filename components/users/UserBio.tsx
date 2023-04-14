@@ -5,8 +5,10 @@ import { format } from "date-fns";
 import Button from "../layout/Button";
 import { BiCalendar } from "react-icons/bi";
 import { useSession } from "next-auth/react";
+import useEditModal from "@/hooks/useEditeModal";
+import { UserAndCount } from "@/pages/api/users/[userId]";
 
-interface UserBioProps {
+interface UserBioProps extends UserAndCount {
   userId: string;
 }
 
@@ -14,8 +16,11 @@ const UserBio: React.FC<UserBioProps> = ({ userId }) => {
   const { data: currentUser } = useSession();
   const { data: fetchedUser } = useUser(userId);
 
+  const editModal = useEditModal();
+
   const createdAt = useMemo(() => {
     if (!fetchedUser?.createdAt) {
+      // fetchedUser.
       return null;
     }
 
@@ -26,7 +31,7 @@ const UserBio: React.FC<UserBioProps> = ({ userId }) => {
     <div className="border-b-[1px] border-neutral-800 pb-4">
       <div className="flex justify-end p-2">
         {currentUser?.user.id === userId ? (
-          <Button secondary label="Edit" onClick={() => {}} />
+          <Button secondary label="Edit" onClick={editModal.onOpen} />
         ) : (
           <Button onClick={() => {}} label="Follow" secondary />
         )}
