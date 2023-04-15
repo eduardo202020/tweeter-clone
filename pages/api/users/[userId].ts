@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/libs/prismadb";
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 
 export interface UserAndCount extends User {
   followersCount: number;

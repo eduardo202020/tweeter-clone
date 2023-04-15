@@ -1,7 +1,6 @@
 import useSWR from "swr";
 
 import fetcher from "@/libs/fetcher";
-import { User } from "@prisma/client";
 import { UserAndCount } from "@/pages/api/users/[userId]";
 
 const useUser = (userId: string) => {

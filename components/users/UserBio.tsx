@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import useEditModal from "@/hooks/useEditeModal";
 import { UserAndCount } from "@/pages/api/users/[userId]";
 
-interface UserBioProps extends UserAndCount {
+interface UserBioProps {
   userId: string;
 }
 
