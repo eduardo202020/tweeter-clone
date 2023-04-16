@@ -13,15 +13,16 @@ export default async function handler(
   }
 
   try {
+    // obtenemos el target id
     const { userId } = req.body;
 
     const { currentUser } = await serverAuth(req, res);
-    console.log("mi id from api", userId);
 
-    if (!userId || typeof userId !== "string") {
+    if (!userId || typeof userId !== "string" || !currentUser) {
       throw new Error("Invalid ID");
     }
 
+    // obtenemos el usuario del target id
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
@@ -32,21 +33,36 @@ export default async function handler(
       throw new Error("Invalid ID from api follow");
     }
 
-    let updatedFollowingIds = [...(user.followingIds || [])];
-
-    // console.log("updatedFollowingIds", updatedFollowingIds);
-    console.log("updatedFollowingIds  before: ", updatedFollowingIds);
+    // obtenemos los followings del target
+    let updatedFollowingIds = [...currentUser.followingIds];
 
     if (req.method === "POST") {
-      console.log("post");
-
       updatedFollowingIds.push(userId);
-      console.log("updatedFollowingIds  after: ", updatedFollowingIds);
+
+      // NOTIFICATION PART START
+      try {
+        await prisma.notification.create({
+          data: {
+            body: "Someone followed you!",
+            userId,
+          },
+        });
+
+        await prisma.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            hasNotification: true,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      // NOTIFICATION PART END
     }
 
     if (req.method === "PATCH") {
-      console.log("patch");
-
       updatedFollowingIds = updatedFollowingIds.filter(
         (followingId) => followingId !== userId
       );
@@ -60,7 +76,6 @@ export default async function handler(
         followingIds: updatedFollowingIds,
       },
     });
-    console.log("updatedFollowingIds last", updatedFollowingIds);
 
     return res.status(200).json(updatedUser);
   } catch (error) {
