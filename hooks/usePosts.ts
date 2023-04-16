@@ -4,9 +4,9 @@ import fetcher from "@/libs/fetcher";
 
 import { ITotalPost } from "@/app";
 
-const usePosts = (userId?: string) => {
+const usePosts = (userId?: string | undefined) => {
   // creamos el url dinamico que depandera del argumento
-  const url = userId ? `/api/posts?userId=${userId}` : "api/posts";
+  const url = userId ? `/api/posts?userId=${userId}` : "/api/posts";
 
   const { data, error, isLoading, mutate } = useSWR<ITotalPost[]>(url, fetcher);
 
