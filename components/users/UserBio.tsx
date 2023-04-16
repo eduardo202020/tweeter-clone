@@ -14,8 +14,8 @@ interface UserBioProps {
 }
 
 const UserBio: React.FC<UserBioProps> = ({ userId }) => {
-  // const { data: currentUser } = useSession();
-  const { data: currentUser } = useCurrentUser();
+  const { data: currentUser } = useSession();
+  // const { data: currentUser } = useCurrentUser();
   const { data: fetchedUser } = useUser(userId);
 
   const editModal = useEditModal();
@@ -34,7 +34,7 @@ const UserBio: React.FC<UserBioProps> = ({ userId }) => {
   return (
     <div className="border-b-[1px] border-neutral-800 pb-4">
       <div className="flex justify-end p-2">
-        {currentUser?.id === userId ? (
+        {currentUser?.user.id === userId ? (
           <Button secondary label="Edit" onClick={editModal.onOpen} />
         ) : (
           <Button
