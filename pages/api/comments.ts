@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import serverAuth from "@/libs/serverAuth";
 import prisma from "@/libs/prismadb";
+import useUser from "@/hooks/useUser";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,7 +17,7 @@ export default async function handler(
     const { body } = req.body;
     const { postId } = req.query;
 
-    if (!postId || typeof postId !== "string") {
+    if (!postId || typeof postId !== "string" || !currentUser) {
       throw new Error("Invalid ID");
     }
 
@@ -29,33 +30,33 @@ export default async function handler(
     });
 
     // NOTIFICATION PART START
-    // try {
-    //   const post = await prisma.post.findUnique({
-    //     where: {
-    //       id: postId,
-    //     },
-    //   });
+    try {
+      const post = await prisma.post.findUnique({
+        where: {
+          id: postId,
+        },
+      });
 
-    //   if (post?.userId) {
-    //     await prisma.notification.create({
-    //       data: {
-    //         body: "Someone replied on your tweet!",
-    //         userId: post.userId,
-    //       },
-    //     });
+      if (post?.userId) {
+        await prisma.notification.create({
+          data: {
+            body: `${currentUser?.name}-replied on your tweet!`,
+            userId: post.userId,
+          },
+        });
 
-    //     await prisma.user.update({
-    //       where: {
-    //         id: post.userId,
-    //       },
-    //       data: {
-    //         hasNotification: true,
-    //       },
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+        await prisma.user.update({
+          where: {
+            id: post.userId,
+          },
+          data: {
+            hasNotification: true,
+          },
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
     // NOTIFICATION PART END
 
     return res.status(200).json(comment);
