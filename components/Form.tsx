@@ -30,18 +30,21 @@ const Form: React.FC<FormProps> = ({ placeholder, isComment, postId }) => {
     try {
       setIsLoading(true);
 
-      await axios.post("/api/posts", { body });
+      // creamos el nuevo url dinamico que cambia segun el componente es un post o un comentario
+      const url = isComment ? `/api/comments?postId=${postId}` : "/api/posts";
+
+      await axios.post(url, { body });
 
       toast.success("Tweet created");
       setBody("");
-      //   mutatePost();
+      mutatePost();
       mutatePosts();
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
     }
-  }, [body, mutatePosts]);
+  }, [body, mutatePosts, isComment, postId, mutatePost]);
 
   return (
     <div className="border-b-[1px] border-neutral-800 px-5 py-2">
