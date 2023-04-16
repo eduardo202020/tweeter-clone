@@ -1,6 +1,5 @@
 import usePosts from "@/hooks/usePosts";
 import React from "react";
-import type { Post } from "@prisma/client";
 import PostItem from "./PostItem";
 
 interface PostFeedProps {

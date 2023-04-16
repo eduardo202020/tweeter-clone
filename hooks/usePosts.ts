@@ -1,7 +1,6 @@
 import useSWR from "swr";
 
 import fetcher from "@/libs/fetcher";
-import type { Post, User } from "@prisma/client";
 
 import { ITotalPost } from "@/app";
 

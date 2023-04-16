@@ -7,9 +7,11 @@ import React, { useCallback, useMemo } from "react";
 import Avatar from "../Avatar";
 import { AiFillHeart, AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
 import { ITotalPost } from "@/app";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import useLike from "@/hooks/useLike";
 
 interface PostItemProps {
-  userId: string;
+  userId?: string;
   data: ITotalPost;
 }
 
@@ -17,7 +19,9 @@ const PostItem: React.FC<PostItemProps> = ({ userId, data }) => {
   const router = useRouter();
   const loginModal = useLoginModal();
 
-  const { data: curreentUser } = useSession();
+  // const { data: curreentUser } = useSession();
+  const { data: curreentUser } = useCurrentUser();
+  const { hasLiked, toggleLike } = useLike({ postId: data.id, userId });
 
   const goToUser = useCallback(
     (event: any) => {
@@ -29,15 +33,20 @@ const PostItem: React.FC<PostItemProps> = ({ userId, data }) => {
   );
 
   const goToPost = useCallback(() => {
-    router.push(`/post/${data.userId}`);
-  }, [data.userId, router]);
+    router.push(`/posts/${data.id}`);
+  }, [router, data.id]);
 
   const onLike = useCallback(
     (event: any) => {
       event.stopPropagation();
-      loginModal.onOpen();
+
+      if (!curreentUser) {
+        loginModal.onOpen();
+      }
+
+      toggleLike();
     },
-    [loginModal]
+    [loginModal, curreentUser, toggleLike]
   );
 
   const createdAt = useMemo(() => {
@@ -46,6 +55,8 @@ const PostItem: React.FC<PostItemProps> = ({ userId, data }) => {
     }
     return formatDistanceToNowStrict(new Date(data.createdAt));
   }, [data.createdAt]);
+
+  const LikeIcon = hasLiked ? AiFillHeart : AiOutlineHeart;
 
   return (
     <div
@@ -118,7 +129,7 @@ const PostItem: React.FC<PostItemProps> = ({ userId, data }) => {
               hover:text-red-500
           "
             >
-              {false ? <AiFillHeart size={20} /> : <AiOutlineHeart size={20} />}
+              <LikeIcon size={20} color={hasLiked ? "red" : ""} />
               <p>{data.likedIds.length}</p>
             </div>
           </div>

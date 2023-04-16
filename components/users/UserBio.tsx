@@ -6,17 +6,21 @@ import Button from "../layout/Button";
 import { BiCalendar } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import useEditModal from "@/hooks/useEditeModal";
-import { UserAndCount } from "@/pages/api/users/[userId]";
+import useFollow from "@/hooks/useFollow";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 interface UserBioProps {
   userId: string;
 }
 
 const UserBio: React.FC<UserBioProps> = ({ userId }) => {
-  const { data: currentUser } = useSession();
+  // const { data: currentUser } = useSession();
+  const { data: currentUser } = useCurrentUser();
   const { data: fetchedUser } = useUser(userId);
 
   const editModal = useEditModal();
+
+  const { isFollowing, toggleFollow } = useFollow(userId);
 
   const createdAt = useMemo(() => {
     if (!fetchedUser?.createdAt) {
@@ -30,10 +34,15 @@ const UserBio: React.FC<UserBioProps> = ({ userId }) => {
   return (
     <div className="border-b-[1px] border-neutral-800 pb-4">
       <div className="flex justify-end p-2">
-        {currentUser?.user.id === userId ? (
+        {currentUser?.id === userId ? (
           <Button secondary label="Edit" onClick={editModal.onOpen} />
         ) : (
-          <Button onClick={() => {}} label="Follow" secondary />
+          <Button
+            onClick={toggleFollow}
+            label={isFollowing ? "Unfollow" : "Follow"}
+            secondary={!isFollowing}
+            outline={isFollowing}
+          />
         )}
       </div>
       <div className="mt-8 px-4">
