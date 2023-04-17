@@ -15,13 +15,16 @@ export default async function handler(
   try {
     if (req.method === "POST") {
       const { currentUser } = await serverAuth(req, res);
+      if (!currentUser) {
+        throw new Error("invalid ID");
+      }
 
       const { body } = req.body;
 
       const post = await prisma.post.create({
         data: {
           body,
-          userId: currentUser.id,
+          userId: currentUser?.id,
         },
       });
 
