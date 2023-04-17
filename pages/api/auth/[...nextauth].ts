@@ -60,9 +60,7 @@ export const authOptions: AuthOptions = {
       return session;
     },
   },
-  pages: {
-    signIn: "/auth",
-  },
+
   debug: process.env.NODE_ENV === "development",
   adapter: PrismaAdapter(prismadb),
   session: {
