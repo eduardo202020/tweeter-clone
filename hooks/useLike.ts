@@ -2,13 +2,13 @@ import axios from "axios";
 import { useCallback, useMemo } from "react";
 import { toast } from "react-hot-toast";
 
-import useCurrentUser from "./useCurrentUser";
 import useLoginModal from "./useLoginModal";
 import usePost from "./usePost";
 import usePosts from "./usePosts";
+import { useSession } from "next-auth/react";
 
 const useLike = ({ postId, userId }: { postId: string; userId?: string }) => {
-  const { data: currentUser } = useCurrentUser();
+  const { data: currentUserv2 } = useSession();
   const { data: fetchedPost, mutate: mutateFetchedPost } = usePost(postId);
   const { mutate: mutateFetchedPosts } = usePosts(userId);
 
@@ -17,11 +17,11 @@ const useLike = ({ postId, userId }: { postId: string; userId?: string }) => {
   const hasLiked = useMemo(() => {
     const list = fetchedPost?.likedIds || [];
 
-    return list.includes(currentUser?.id);
-  }, [fetchedPost, currentUser]);
+    return list.includes(currentUserv2?.user.id);
+  }, [fetchedPost, currentUserv2?.user.id]);
 
   const toggleLike = useCallback(async () => {
-    if (!currentUser) {
+    if (!currentUserv2?.user) {
       return loginModal.onOpen();
     }
 
@@ -43,7 +43,7 @@ const useLike = ({ postId, userId }: { postId: string; userId?: string }) => {
       toast.error("Something went wrong");
     }
   }, [
-    currentUser,
+    currentUserv2,
     hasLiked,
     postId,
     mutateFetchedPosts,

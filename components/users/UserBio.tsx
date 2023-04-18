@@ -7,7 +7,6 @@ import { BiCalendar } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import useEditModal from "@/hooks/useEditeModal";
 import useFollow from "@/hooks/useFollow";
-import useCurrentUser from "@/hooks/useCurrentUser";
 
 interface UserBioProps {
   userId: string;

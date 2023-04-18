@@ -6,14 +6,15 @@ import { ClipLoader } from "react-spinners";
 import UserHero from "@/components/users/UserHero";
 import UserBio from "@/components/users/UserBio";
 import PostFeed from "@/components/posts/PostFeed";
+import { useSession } from "next-auth/react";
 
 const UserView = ({ id }: { id: string }) => {
   const router = useRouter();
   const { userId } = router.query;
 
-  const { data: fetchedUser, isLoading } = useUser(userId as string);
+  const { data, status } = useSession();
 
-  if (isLoading || !fetchedUser) {
+  if (status === "loading") {
     return (
       <div className="flex justify-center items-center h-full">
         <ClipLoader color="lightblue" size={80} />
@@ -23,7 +24,7 @@ const UserView = ({ id }: { id: string }) => {
 
   return (
     <>
-      <Header showBackArrow label={fetchedUser?.name || ""} />
+      <Header showBackArrow label={data?.user.name || "Not log in"} />
       <UserHero userId={userId as string} />
       <UserBio userId={userId as string} />
       <PostFeed userId={userId as string} />

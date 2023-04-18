@@ -7,10 +7,12 @@ import { BiLogOut } from "react-icons/bi";
 import SiderbarTweetButton from "./SiderbarTweetButton";
 import { signOut, useSession } from "next-auth/react";
 import useCurrentUser from "@/hooks/useCurrentUser";
+import useUser from "@/hooks/useUser";
 
 const Sidebar = () => {
   const { data: currentUser } = useSession();
-  const { data: currentUserv2 } = useCurrentUser();
+  // const { data: currentUserv2 } = useCurrentUser();
+  const { data: currentUserv3 } = useUser(currentUser?.user.id as string);
 
   const items = [
     {
@@ -23,7 +25,7 @@ const Sidebar = () => {
       href: "/notifications",
       icon: BsBellFill,
       auth: true,
-      alert: currentUserv2?.hasNotification!,
+      alert: currentUserv3?.hasNotification,
     },
     {
       label: "Profile",
@@ -45,7 +47,7 @@ const Sidebar = () => {
               icon={item.icon}
               label={item.label}
               auth={item.auth}
-              alert={item.alert}
+              alert={item.alert as boolean}
             />
           ))}
           {!!currentUser?.user && (

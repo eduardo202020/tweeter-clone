@@ -4,9 +4,14 @@ import useCurrentUser from "./useCurrentUser";
 import { useCallback, useMemo } from "react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
 const useFollow = (userId: string) => {
-  const { data: currentUser, mutate: mutateCurrentUser } = useCurrentUser();
+  // const { data: currentUser, mutate: mutateCurrentUser } = useCurrentUser();
+  const { data: user } = useSession();
+  const { data: currentUser, mutate: mutateCurrentUser } = useUser(
+    user?.user.id as string
+  );
   const { mutate: mutateFechedUser } = useUser(userId);
 
   const loginModal = useLoginModal();
